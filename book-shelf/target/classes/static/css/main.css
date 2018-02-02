@@ -1,0 +1,15 @@
+body {
+    font-family: 'PT Sans', sans-serif;
+}
+
+.content {
+    margin-top : 150px;
+}
+
+.bg-color-gray {
+    background-color: #ececec;
+}
+
+.bg-color-black {
+    background-color: #212529;
+}

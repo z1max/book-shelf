@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head :: common-head"/>
+<body>
+
+<div th:replace="common/header :: common-header"/>
+
+<!--Content-->
+<div class="container content">
+    <div class=row>
+        <div class="col">
+            <div class = "clearfix">
+                <h1 class = "float-left">Books</h1>
+                <h1 class = "float-right">
+                    <button class = "btn btn-outline-dark" data-toggle="modal" data-target="#addingModal">Add Book</button>
+                </h1>
+            </div>
+            <table class="table table-hover">
+                <thead class = "thead-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Read</th>
+                    <th>Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book : ${books}">
+                    <td th:text="${book.title}">Title</td>
+                    <td th:text="${book.author}">Author</td>
+                    <td th:if="${book.isReadAlready()}"><span class="badge badge-success">Yes</span></td>
+                    <td th:unless="${book.isReadAlready()}"><span class="badge badge-secondary">No</span></td>
+                    <td><a class="btn btn-outline-info" th:href="@{/books/{id}(id = ${book.id})}">Details</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <form th:action="@{/{page}(page = ${currentPage})}" method="get" th:object="${sortHelper}">
+                <div class = "form-inline">
+                    <a href="#" class="btn btn-outline-primary disabled pr-2" role="button" aria-disabled="true">Order by</a>
+                    <select class = "form-control pr-2" id = "sortingBy" th:field="*{sortingBy}">
+                        <option selected value = "no_sort">No sort</option>
+                        <option value = "title">Title</option>
+                        <option value = "author">Author</option>
+                        <option value = "readAlready">Read</option>
+                    </select>
+                    <button type = "submit" class = "btn btn-outline-success">Submit</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Pagination-->
+<nav>
+    <ul class="pagination justify-content-center">
+        <li th:each="i : ${#numbers.sequence(0,totalPages)}" class="page-item" th:classappend = "${currentPage eq i+1} ? 'active' : ''" >
+            <a class="page-link" th:text="${i+1}" th:href="@{/{page}(page = ${i + 1}, sortingBy = ${sortHelper.sortingBy})}"></a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Adding book modal -->
+<div class="modal fade" id="addingModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Adding a new book</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+               <form th:action="@{/{page}(page = ${currentPage}, sortingBy = ${sortHelper.sortingBy})}" th:object="${book}" method="post">
+                   <div class = "form-group">
+                       <label for = "title">Title:</label>
+                       <input type = "text" class = "form-control" th:field = "*{title}" id = "title" name = "title">
+                   </div>
+                   <div class = "form-group">
+                       <label for = "author">Author:</label>
+                       <input type = "text" class = "form-control" th:value = "*{author}" id = "author" name = "author">
+                   </div>
+                   <div class = "form-group">
+                       <label for = "description">Description:</label>
+                       <textarea class = "form-control" rows = "5" th:field = "*{description}" id = "description" name = "description" ></textarea>
+                   </div>
+                   <div class = "form-group">
+                       <label for = "printYear">Year Published:</label>
+                       <input type = "number" class = "form-control" th:field= "*{printYear}" id = "printYear" name = "printYear">
+                   </div>
+                   <div class = "form-group">
+                       <label for = "isbn">ISBN:</label>
+                       <input type = "text" class = "form-control" th:field = "*{isbn}" id = "isbn" name = "isbn">
+                   </div>
+                   <div class="form-check form-check-inline">
+                       <label class="form-check-label">
+                           <input type="checkbox" class="form-check-input" th:field = "*{readAlready}" id = "readAlready" name = "readAlready">Already read?
+                       </label>
+                   </div>
+                   <div class = "form-group">
+                       <button type = "submit" class = "btn btn-success">Submit</button>
+                   </div>
+               </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
